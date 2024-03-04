@@ -2,6 +2,9 @@ from PIL import Image
 import os
 import glob
 import sys
+import tkinter as tk
+import tkinter.ttk as ttk
+from tkinter.filedialog import askopenfilenames
 
 if __name__ == "__main__":
     def set_overwrite():
@@ -16,7 +19,7 @@ if __name__ == "__main__":
         overwrite = overwrite_ans.lower() == "y" or overwrite_ans.lower() == "yes"
 
 
-    def process_file(name):
+    def process_file(name, quality_scale=0):
         '''Main function to process a single file'''
 
         file_tuple = os.path.splitext(name)
@@ -66,7 +69,7 @@ if __name__ == "__main__":
             return
 
         im = Image.open(name)
-        q = get_q(55 if unwebp else 45)
+        q = get_q((55 if unwebp else 45) + quality_scale)
 
         im.save(fp=f"{file_tuple[0]}.{out_format}", format=out_format, lossless=lossless, quality=q, method=6)
 
@@ -92,7 +95,80 @@ if __name__ == "__main__":
                 break
 
         return files
+    
+    def run_gui():
+        '''Runs Tk-based GUI'''
 
+        # Initialize everything
+        window = tk.Tk()
+        window.wm_title("QuickWEBPer GUI")
+        window.iconbitmap("icon.ico")
+        btn_var = tk.IntVar()
+        scl_var = tk.IntVar()
+        status_var = tk.StringVar()
+        status_var.set("Idle")
+        window.resizable(width=False, height=False)
+        padding = 5
+        intro_frame = tk.Frame()
+        intro_frame.pack()
+        main_frame = tk.Frame()
+        main_frame.pack()
+        out_frame = tk.Frame()
+        out_frame.pack(fill=tk.X)
+        global gui_files
+        gui_files = None
+
+        # Create widgets
+        lbl_intro = ttk.Label(master=intro_frame, text="Welcome to QuickWEBPer GUI!")
+        btn_open = ttk.Button(master=intro_frame, text="Select file(s)")
+        lbl_quality = ttk.Label(master=main_frame, text="Quality bias:")
+        scl_quality = ttk.Scale(master=main_frame, from_=-5, to=5, value=5, variable=scl_var)
+        lbl_lowq = ttk.Label(master=main_frame, text="-")
+        lbl_highq = ttk.Label(master=main_frame, text="+")
+        btn_overwrite = tk.Checkbutton(master=intro_frame, text="Overwrite all files with the same names", variable=btn_var)
+        btn_run = ttk.Button(state="disabled", master=out_frame, text="Start")
+        lbl_status = ttk.Label(master=out_frame, textvariable=status_var)
+        btn_overwrite.deselect()
+
+        # Render widgets
+        lbl_intro.pack(padx=padding, pady=padding)
+        btn_open.pack(padx=padding, pady=padding)
+        lbl_quality.grid(row=0, column=1, sticky="n")
+        scl_quality.grid(row=1, column=1, padx=padding, pady=padding)
+        lbl_lowq.grid(row=1, column=0)
+        lbl_highq.grid(row=1, column=2)
+        btn_overwrite.pack(padx=padding, pady=padding)
+        btn_run.pack(padx=padding, pady=padding)
+        lbl_status.pack(side=tk.LEFT, padx=padding, pady=padding)
+
+        # Bindings and routines
+        def get_filename(*args):
+            '''Get files from GUI button'''
+            global gui_files
+            gui_files = askopenfilenames()
+            if gui_files:
+                btn_run["state"] = "normal"
+
+        def set_overwrite(*args):
+            global overwrite
+            overwrite = not btn_var.get()
+
+        def process_gui(*args):
+            global gui_files
+            if gui_files is not None:
+                status_var.set("Processing...")
+                window.update()
+                for file in gui_files:
+                    process_file(file, int(scl_var.get()))
+            status_var.set("Done!")
+
+        btn_open.bind("<Button-1>", get_filename)
+        btn_overwrite.bind("<Button-1>", set_overwrite)
+        btn_run.bind("<Button-1>", process_gui)
+        global overwrite
+        overwrite = False
+
+        window.mainloop()
 
     total_diff = 0
     art = ''' _____     _     _   _ _ _ _____ _____ _____         
@@ -102,14 +178,18 @@ if __name__ == "__main__":
    |__|                                             \n'''
 
     files = get_files(sys.argv[1:])
-    print(art)
-    set_overwrite()
-    print("\n")
 
-    for file in files or glob.glob('*'):
-        process_file(file)
+    if len(files):
+        print(art, "\nWelcome to QuickWEBPer CLI!\n")
+        set_overwrite()
+        print("\n")
 
-    if total_diff:
-        print(f"\nTotal storage saved: {int(total_diff)}KB\n")
+        for file in files:
+            process_file(file)
+
+        if total_diff:
+            print(f"\nTotal storage saved: {int(total_diff)}KB\n")
+        else:
+            print("\nDone!\n")
     else:
-        print("\nDone!\n")
+        run_gui()

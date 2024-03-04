@@ -7,6 +7,8 @@ No tweaking needed, vector and raster files supported.
 
 ![Image](<https://raw.githubusercontent.com/MariaWasNotAvailable/QuickWEBPer/main/qw.webp>)
 
+![Image](<https://raw.githubusercontent.com/MariaWasNotAvailable/QuickWEBPer/main/qwg.webp>)
+
 ## Installation
 
 Requires Python 3.
@@ -19,6 +21,7 @@ python -m venv venv
 venv\Scripts\Activate
 python -m pip install -r requirements.txt
 ```
+(or just run the .exe release)
 
 Linux:
 ```
@@ -43,8 +46,9 @@ python webper entire\folder\path
 ```
 or
 ```
-python webper # this will process all files in the current path
+python webper # either of these...
+webper.exe    # ...will open the GUI
 ```
 
 ## Rationale
-QuickWEBPer was conceived as a "no-config" batch converter, i. e. with a web-ready input content-reactive compression profile. 
+QuickWEBPer was conceived as a "no-config" batch converter, i. e. with a web-ready input content-reactive compression profile. It silently skips non-image files so you don't have to be too careful about multiple file input. 
