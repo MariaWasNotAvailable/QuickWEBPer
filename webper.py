@@ -7,6 +7,12 @@ import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilenames
 
 if __name__ == "__main__":
+    def log(*content):
+        '''Console logs (only for CLI)'''
+        if cli_logs:
+            for line in content:
+                print(line)
+
     def set_overwrite():
         '''Prompts user about file overwrite'''
 
@@ -14,7 +20,7 @@ if __name__ == "__main__":
         overwrite_ans = ""
 
         while overwrite_ans.lower() not in ('y', 'n', 'yes', 'no'):
-            overwrite_ans = input("Do you want to overwrite all files with the same names? (Y/N) ")
+            overwrite_ans = input("Allow overwriting ALL files with the same names? (Y/N) ")
 
         overwrite = overwrite_ans.lower() == "y" or overwrite_ans.lower() == "yes"
 
@@ -55,17 +61,17 @@ if __name__ == "__main__":
                     + (min(10, get_pos((1572864 - resolution)/130000)))) # 0-10% increase for resolutions <1.5 MP
 
         if not os.path.isfile(name):
-            print(f"File \"{name}\" not found, skipping...")
+            log(f"File \"{name}\" not found, skipping...")
             return
 
         if (not lossless and file_tuple[1] not in (".jpg", ".jpeg", ".tif", ".tiff", ".webp")):
-            #print(f"Unrecognized file format ({name}), skipping...")
+            log(f"Unrecognized file format ({name}), skipping...")
             return
 
         pre_out_name = f"{file_tuple[0]}.{out_format}"
 
         if os.path.isfile(pre_out_name) and not overwrite:
-            print(f"\"{pre_out_name}\": File already exists, skipping...")
+            log(f"\"{pre_out_name}\": File already exists, skipping...")
             return
 
         im = Image.open(name)
@@ -76,12 +82,11 @@ if __name__ == "__main__":
         diff = get_pos((size - os.path.getsize(f"{file_tuple[0]}.{out_format}"))/1024)
         total_diff += diff
 
-        print(f"\"{name}\" output quality: {q} ({'' if lossless else 'not '}lossless)")
+        log(f"\"{name}\" output quality: {q} ({'' if lossless else 'not '}lossless)")
         if unwebp:
-            print(f"Converted from WEBP to {out_format} for compatibility")
+            log(f"Converted from WEBP to {out_format} for compatibility")
         else:
-            print(f"Data saved: {int(diff)}KB")
-
+            log(f"Data saved: {int(diff)}KB")
 
     def get_files(args):
         '''Returns either a list of (existing) supplied files, or an entire folder if applicable'''
@@ -176,20 +181,22 @@ if __name__ == "__main__":
 |  |  | | | |  _| '_| | | |   __| __ -|   __| -_|  _|
 |__  _|___|_|___|_,_|_____|_____|_____|__|  |___|_|  
    |__|                                             \n'''
-
+    cli_logs = False
     files = get_files(sys.argv[1:])
 
     if len(files):
-        print(art, "\nWelcome to QuickWEBPer CLI!\n")
+        cli_logs = True
+
+        log(art, "\nWelcome to QuickWEBPer CLI!\n")
         set_overwrite()
-        print("\n")
+        log("\n")
 
         for file in files:
             process_file(file)
 
         if total_diff:
-            print(f"\nTotal storage saved: {int(total_diff)}KB\n")
+            log(f"\nTotal storage saved: {int(total_diff)}KB\n")
         else:
-            print("\nDone!\n")
+            log("\nDone!\n")
     else:
         run_gui()
