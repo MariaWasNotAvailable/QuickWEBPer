@@ -46,9 +46,10 @@ python webper entire\folder\path
 ```
 or
 ```
-python webper # either of these...
-webper.exe    # ...will open the GUI
+python webper invalid_file.tmp  # either of these...
+python webper                   #
+webper.exe                      # ...will open the GUI
 ```
 
 ## Rationale
-QuickWEBPer was conceived as a "no-config" batch converter, i. e. with a web-ready input content-reactive compression profile. It silently skips non-image files so you don't have to be too careful about multiple file input. 
+QuickWEBPer was conceived as a "no-config" batch converter, i. e. with a web-ready, input-aware compression profile. It deliberately silently skips non-image files so you don't have to be too careful about multiple file input. 
