@@ -53,3 +53,7 @@ webper.exe                      # ...will open the GUI
 
 ## Rationale
 QuickWEBPer was conceived as a "no-config" batch converter, i. e. with a web-ready, input-aware compression profile. It deliberately silently skips non-image files so you don't have to be too careful about multiple file input. 
+
+*But couldn't you do that with a shell one-liner?*
+
+You definitely could! The entire point, though, is to enable users who might not be comfortable with the terminal or installing packages to do this *quick*.
