@@ -11,7 +11,7 @@ No tweaking needed, vector and raster files supported.
 
 ## Installation
 
-Requires Python 3.
+Requires Python 3 or Docker.
 
 Windows:
 ```
@@ -30,6 +30,14 @@ cd QuickWEBPer
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
+```
+
+Docker:
+```
+git clone https://github.com/MariaWasNotAvailable/QuickWEBPer.git
+cd QuickWEBPer
+docker build --tag 'quickwebper' .
+docker run 'quickwebper'
 ```
 
 ## Usage

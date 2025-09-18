@@ -1,0 +1,7 @@
+build/
+dist/
+venv/
+webper.spec
+.idea
+LICENSE
+README.md

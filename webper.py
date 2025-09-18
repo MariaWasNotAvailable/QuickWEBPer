@@ -9,6 +9,7 @@ from tkinter.filedialog import askopenfilenames
 if __name__ == "__main__":
     def log(*content):
         '''Console logs (only for CLI)'''
+
         if cli_logs:
             for line in content:
                 print(line)
